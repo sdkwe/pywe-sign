@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import unicode_literals
+
 import copy
 import hashlib
 
@@ -44,9 +46,9 @@ def to_binary(value, encoding='utf-8'):
 
 
 def format_url(params, api_key=None):
-    data = [to_binary('%s=%s' % (k, params[k])) for k in sorted(params) if params[k]]
+    data = [to_binary('{}={}'.format(k, params[k])) for k in sorted(params) if params[k]]
     if api_key:
-        data.append(to_binary('key=%s' % api_key))
+        data.append(to_binary('key={}'.format(api_key)))
     return b'&'.join(data)
 
 
