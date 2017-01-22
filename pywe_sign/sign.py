@@ -8,7 +8,7 @@ import hashlib
 from pywe_utils import to_binary, to_text
 
 
-__all__ = ['format_url', 'calculate_signature', 'check_signature']
+__all__ = ['format_url', 'calculate_signature', 'fill_signature', 'check_signature']
 
 
 # Signature Algorithm
@@ -25,6 +25,12 @@ def format_url(params, api_key=None):
 def calculate_signature(params, api_key):
     url = format_url(params, api_key)
     return to_text(hashlib.md5(url).hexdigest().upper())
+
+
+def fill_signature(params, api_key):
+    sign = calculate_signature(params, api_key)
+    params['sign'] = sign
+    return params
 
 
 def check_signature(params, api_key):
