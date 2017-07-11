@@ -27,7 +27,7 @@ Method
 
     def calculate_signature(params, api_key):
 
-    def check_signature(params, api_key):
+    def check_signature(params, api_key, sign=None):
 
     def fill_signature(params, api_key):
 

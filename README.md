@@ -19,7 +19,7 @@ from pywe_sign import calculate_signature, check_signature, fill_signature, jsap
 ```python
 def calculate_signature(params, api_key):
 
-def check_signature(params, api_key):
+def check_signature(params, api_key, sign=None):
 
 def fill_signature(params, api_key):
 
