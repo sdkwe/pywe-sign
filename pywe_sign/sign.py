@@ -11,16 +11,15 @@ from pywe_utils import to_binary, to_text
 __all__ = ['format_url', 'calculate_signature', 'check_signature', 'fill_signature', 'jsapi_signature', 'calculate_jsapi_signature', 'check_jsapi_signature', 'fill_jsapi_signature']
 
 
-# Signature Algorithm
-#   See: https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=4_3
-
-
 def format_url(params, api_key=None):
     data = [to_binary('{}={}'.format(k, params[k])) for k in sorted(params) if params[k]]
     if api_key:
         data.append(to_binary('key={}'.format(api_key)))
     return b'&'.join(data)
 
+
+# WxPay Relative Signature Algorithm
+#   See: https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=4_3
 
 def calculate_signature(params, api_key):
     url = format_url(params, api_key)
@@ -38,6 +37,9 @@ def fill_signature(params, api_key):
     params['sign'] = sign
     return params
 
+
+# JSAPI Relative Signature Algorithm
+#   See: https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421141115
 
 def jsapi_signature(params):
     url = format_url(params)
