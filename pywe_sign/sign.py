@@ -12,9 +12,9 @@ __all__ = ['format_url', 'calculate_signature', 'check_signature', 'fill_signatu
 
 
 def format_url(params, api_key=None):
-    data = [to_binary('{}={}'.format(k, params[k])) for k in sorted(params) if params[k]]
+    data = [to_binary('{0}={1}'.format(k, params[k])) for k in sorted(params) if params[k]]
     if api_key:
-        data.append(to_binary('key={}'.format(api_key)))
+        data.append(to_binary('key={0}'.format(api_key)))
     return b'&'.join(data)
 
 
