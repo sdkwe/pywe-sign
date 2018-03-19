@@ -2,8 +2,9 @@
 
 import copy
 
-from pywe_sign import (calculate_jsapi_signature, calculate_signature, check_jsapi_signature, check_signature,
-                       fill_jsapi_signature, fill_signature, jsapi_signature)
+from pywe_sign import (basic_signature, calculate_basic_signature, calculate_jsapi_signature, calculate_signature,
+                       check_callback_signature, check_jsapi_signature, check_signature, fill_jsapi_signature,
+                       fill_signature, jsapi_signature)
 
 
 class TestSignCommands(object):
@@ -40,3 +41,10 @@ class TestSignCommands(object):
         assert check_jsapi_signature(params2)
         assert check_jsapi_signature(params, sign)
         assert fill_jsapi_signature(params) == params2
+
+    def test_callback_signature_relative(self):
+        data = ['789', '456', '123']
+        sign = 'f7c3bc1d808e04732adf679965ccc34ca7ae3441'
+        assert basic_signature(data) == sign
+        assert calculate_basic_signature(data) == sign
+        assert check_callback_signature('789', sign, '456', '123')

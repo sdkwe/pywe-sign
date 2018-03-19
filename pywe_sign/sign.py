@@ -8,7 +8,7 @@ import hashlib
 from pywe_utils import to_binary, to_text
 
 
-__all__ = ['format_url', 'calculate_signature', 'check_signature', 'fill_signature', 'jsapi_signature', 'calculate_jsapi_signature', 'check_jsapi_signature', 'fill_jsapi_signature']
+__all__ = ['format_url', 'calculate_signature', 'check_signature', 'fill_signature', 'jsapi_signature', 'calculate_jsapi_signature', 'check_jsapi_signature', 'fill_jsapi_signature', 'basic_signature', 'calculate_basic_signature', 'check_callback_signature']
 
 
 def format_url(params, api_key=None):
@@ -60,3 +60,19 @@ def fill_jsapi_signature(params):
     sign = jsapi_signature(params)
     params['sign'] = sign
     return params
+
+
+# Callback Relative Signature Algorithm
+#   See: https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421135319
+
+def basic_signature(data, delimiter=b''):
+    str2sign = to_binary(delimiter).join([to_binary(d) for d in sorted(data)])
+    return hashlib.sha1(str2sign).hexdigest()
+
+
+def calculate_basic_signature(data, delimiter=b''):
+    return basic_signature(data, delimiter=delimiter)
+
+
+def check_callback_signature(token, signature, timestamp, nonce):
+    return signature == basic_signature([token, timestamp, nonce])
