@@ -26,15 +26,15 @@ def calculate_signature(params, api_key):
     return to_text(hashlib.md5(url).hexdigest().upper())
 
 
-def check_signature(params, api_key, sign=None):
+def check_signature(params, api_key, sign=None, sign_key='sign'):
     _params = copy.deepcopy(params)
-    sign = sign or _params.pop('sign', '')
+    sign = sign or _params.pop(sign_key, '')
     return sign == calculate_signature(_params, api_key)
 
 
-def fill_signature(params, api_key):
+def fill_signature(params, api_key, sign_key='sign'):
     sign = calculate_signature(params, api_key)
-    params['sign'] = sign
+    params[sign_key] = sign
     return params
 
 
@@ -50,15 +50,15 @@ def calculate_jsapi_signature(params):
     return jsapi_signature(params)
 
 
-def check_jsapi_signature(params, sign=None):
+def check_jsapi_signature(params, sign=None, sign_key='sign'):
     _params = copy.deepcopy(params)
-    sign = sign or _params.pop('sign', '')
+    sign = sign or _params.pop(sign_key, '')
     return sign == jsapi_signature(_params)
 
 
-def fill_jsapi_signature(params):
+def fill_jsapi_signature(params, sign_key='sign'):
     sign = jsapi_signature(params)
-    params['sign'] = sign
+    params[sign_key] = sign
     return params
 
 
