@@ -11,8 +11,12 @@ from pywe_utils import to_binary, to_text
 __all__ = ['format_url', 'calculate_signature', 'check_signature', 'fill_signature', 'jsapi_signature', 'calculate_jsapi_signature', 'check_jsapi_signature', 'fill_jsapi_signature', 'basic_signature', 'calculate_basic_signature', 'calculate_callback_signature', 'check_callback_signature', 'calculate_msg_signature', 'check_msg_signature']
 
 
-def format_url(params, api_key=None):
-    data = [to_binary('{0}={1}'.format(k, params[k])) for k in sorted(params) if params[k]]
+def is_param_has_value(param, ignore_zero=False):
+    return param or (not ignore_zero and param == 0)
+
+
+def format_url(params, api_key=None, ignore_zero=False):
+    data = [to_binary('{0}={1}'.format(k, params[k])) for k in sorted(params) if is_param_has_value(params[k], ignore_zero=ignore_zero)]
     if api_key:
         data.append(to_binary('key={0}'.format(api_key)))
     return b'&'.join(data)
@@ -21,44 +25,44 @@ def format_url(params, api_key=None):
 # WxPay Relative Signature Algorithm
 #   See: https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=4_3
 
-def calculate_signature(params, api_key):
-    url = format_url(params, api_key)
+def calculate_signature(params, api_key, ignore_zero=False):
+    url = format_url(params, api_key, ignore_zero=ignore_zero)
     return to_text(hashlib.md5(url).hexdigest().upper())
 
 
-def check_signature(params, api_key, sign=None):
+def check_signature(params, api_key, sign=None, sign_key='sign', ignore_zero=False):
     _params = copy.deepcopy(params)
-    sign = sign or _params.pop('sign', '')
-    return sign == calculate_signature(_params, api_key)
+    sign = sign or _params.pop(sign_key, '')
+    return sign == calculate_signature(_params, api_key, ignore_zero=ignore_zero)
 
 
-def fill_signature(params, api_key):
-    sign = calculate_signature(params, api_key)
-    params['sign'] = sign
+def fill_signature(params, api_key, sign_key='sign', ignore_zero=False):
+    sign = calculate_signature(params, api_key, ignore_zero=ignore_zero)
+    params[sign_key] = sign
     return params
 
 
 # JSAPI Relative Signature Algorithm
 #   See: https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421141115
 
-def jsapi_signature(params):
-    url = format_url(params)
+def jsapi_signature(params, ignore_zero=False):
+    url = format_url(params, ignore_zero=ignore_zero)
     return hashlib.sha1(url).hexdigest()
 
 
-def calculate_jsapi_signature(params):
-    return jsapi_signature(params)
+def calculate_jsapi_signature(params, ignore_zero=False):
+    return jsapi_signature(params, ignore_zero=ignore_zero)
 
 
-def check_jsapi_signature(params, sign=None):
+def check_jsapi_signature(params, sign=None, sign_key='sign', ignore_zero=False):
     _params = copy.deepcopy(params)
-    sign = sign or _params.pop('sign', '')
-    return sign == jsapi_signature(_params)
+    sign = sign or _params.pop(sign_key, '')
+    return sign == jsapi_signature(_params, ignore_zero=ignore_zero)
 
 
-def fill_jsapi_signature(params):
-    sign = jsapi_signature(params)
-    params['sign'] = sign
+def fill_jsapi_signature(params, sign_key='sign', ignore_zero=False):
+    sign = jsapi_signature(params, ignore_zero=ignore_zero)
+    params[sign_key] = sign
     return params
 
 
