@@ -8,7 +8,7 @@ import hashlib
 from pywe_utils import to_binary, to_text
 
 
-__all__ = ['format_url', 'calculate_signature', 'check_signature', 'fill_signature', 'jsapi_signature', 'calculate_jsapi_signature', 'check_jsapi_signature', 'fill_jsapi_signature', 'basic_signature', 'calculate_basic_signature', 'check_callback_signature']
+__all__ = ['format_url', 'calculate_signature', 'check_signature', 'fill_signature', 'jsapi_signature', 'calculate_jsapi_signature', 'check_jsapi_signature', 'fill_jsapi_signature', 'basic_signature', 'calculate_basic_signature', 'calculate_callback_signature', 'check_callback_signature', 'calculate_msg_signature', 'check_msg_signature']
 
 
 def is_param_has_value(param, ignore_zero=False):
@@ -78,5 +78,17 @@ def calculate_basic_signature(data, delimiter=b''):
     return basic_signature(data, delimiter=delimiter)
 
 
+def calculate_callback_signature(token, timestamp, nonce):
+    return basic_signature([token, timestamp, nonce])
+
+
 def check_callback_signature(token, signature, timestamp, nonce):
-    return signature == basic_signature([token, timestamp, nonce])
+    return signature == calculate_callback_signature(token, timestamp, nonce)
+
+
+def calculate_msg_signature(token, timestamp, nonce, encrypt):
+    return basic_signature([token, timestamp, nonce, encrypt])
+
+
+def check_msg_signature(token, msg_signature, timestamp, nonce, encrypt):
+    return msg_signature == calculate_msg_signature(token, timestamp, nonce, encrypt)
